@@ -13,9 +13,13 @@
   <url>http://www.example.com</url>
 
   <properties>
+    <scala.major-version>2.12</scala.major-version>
+    <scala.version>${scala.major-version}.10</scala.version>
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
+    <alchim31.scala.plugin>4.2.0</alchim31.scala.plugin>
   </properties>
 
   <dependencies>
@@ -25,6 +29,23 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-library</artifactId>
+        <version>${scala.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-compiler</artifactId>
+        <version>${scala.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-reflect</artifactId>
+        <version>${scala.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -69,6 +90,42 @@
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
         </plugin>
+
+        <plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+				<version>${alchim31.scala.plugin}</version>
+				<executions>
+					<execution>
+						<id>compile-scala</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>add-source</goal>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>test-compile-scala</id>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>add-source</goal>
+							<goal>testCompile</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<recompileMode>incremental</recompileMode>
+					<compileOrder>Mixed</compileOrder>
+					<scalaVersion>${scala.version}</scalaVersion>
+					<args>
+						<arg>-deprecation</arg>
+					</args>
+					<jvmArgs>
+						<jvmArg>-Xms64m</jvmArg>
+						<jvmArg>-Xmx1024m</jvmArg>
+					</jvmArgs>
+				</configuration>
+			</plugin>
       </plugins>
     </pluginManagement>
   </build>
