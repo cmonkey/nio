@@ -2,12 +2,25 @@ package org.excavator.boot.nio
 
 import java.net.InetSocketAddress
 import java.nio.channels.{SelectionKey, Selector, ServerSocketChannel}
+import java.nio.charset.{Charset, StandardCharsets}
 
 import org.slf4j.LoggerFactory
 
 
 class NioServer(port: Int){
   val logger = LoggerFactory.getLogger(classOf[NioServer])
+
+  def acceptHandler(serverSocketChannel: ServerSocketChannel, selector: Selector) = {
+    val socketChannel = serverSocketChannel.accept()
+
+    socketChannel.configureBlocking(false)
+    socketChannel.register(selector, SelectionKey.OP_READ)
+    socketChannel.write(StandardCharsets.UTF_8.encode("hi foo"))
+  }
+
+  def readHandler(selectionKey: SelectionKey, selector: Selector) = {
+
+  }
 
   def start(): Unit = {
     val selector = Selector.open()
@@ -34,11 +47,11 @@ class NioServer(port: Int){
           iterator.remove()
 
           if (selectionKey.isAcceptable()) {
-
+            acceptHandler(serverSocketChannel, selector)
           }
 
           if (selectionKey.isReadable) {
-
+            readHandler(selectionKey, selector)
           }
         }
       }
